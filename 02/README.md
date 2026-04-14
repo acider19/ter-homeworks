@@ -29,16 +29,16 @@
 
 7. Команды выполненные в `terraform console`
 
-  7.1 `local.test_list[1]`
+  Отображение второго элемента списка test_list - `local.test_list[1]`
   ![command1](img/screen5.png)
   
-  7.2 `3`
+  Длина списка test_list с помощью функции length - `3`
   ![command2](img/screen6.png)
   
-  7.3 `local.test_map["admin"]`
+  Отображение значения ключа admin из map test_map - `local.test_map["admin"]`
   ![command3](img/screen7.png)
   
-  7.4 `"${local.test_map["admin"]} is ${keys(local.test_map)[0]} for ${local.test_list[2]} server based on OS ${local.servers.production["image"]} with ${local.servers.production["cpu"]} vcpu, ${local.servers.production["ram"]} ram and ${length(local.servers.production.disks)} virtual disks"`
+  Interpolation-выражение, результатом которого будет: “John is admin for production server based on OS ubuntu-20-04 with X vcpu, Y ram and Z virtual disks” - `"${local.test_map["admin"]} is ${keys(local.test_map)[0]} for ${local.test_list[2]} server based on OS ${local.servers.production["image"]} with ${local.servers.production["cpu"]} vcpu, ${local.servers.production["ram"]} ram and ${length(local.servers.production.disks)} virtual disks"`
   ![long command](img/screen8.png)
 
 8. [Файл variables.tf](src/variables.tf) строки 77 - 89
