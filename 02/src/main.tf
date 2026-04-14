@@ -6,19 +6,28 @@ resource "yandex_vpc_subnet" "develop" {
   zone           = var.default_zone
   network_id     = yandex_vpc_network.develop.id
   v4_cidr_blocks = var.default_cidr
+  route_table_id = yandex_vpc_route_table.rt.id
+}
+resource "yandex_vpc_subnet" "develop_b" {
+  name           = "${var.vpc_name}_b"
+  zone           = var.zone_b
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.cidr_b
+  route_table_id = yandex_vpc_route_table.rt.id
 }
 
 
 data "yandex_compute_image" "ubuntu" {
-  family = "ubuntu-2004-lts"
+  family = var.image
 }
 resource "yandex_compute_instance" "platform" {
-  name        = "netology-develop-platform-web"
-  platform_id = "standart-v4"
+  name        = local.name_web
+  platform_id = var.vm_web_platform_id
+  zone        = var.default_zone
   resources {
-    cores         = 1
-    memory        = 1
-    core_fraction = 5
+    cores         = var.vms_resources.web["cores"]
+    memory        = var.vms_resources.web["memory"]
+    core_fraction = var.vms_resources.web["core_fraction"]
   }
   boot_disk {
     initialize_params {
@@ -30,12 +39,57 @@ resource "yandex_compute_instance" "platform" {
   }
   network_interface {
     subnet_id = yandex_vpc_subnet.develop.id
-    nat       = true
+    nat       = false
   }
 
   metadata = {
-    serial-port-enable = 1
-    ssh-keys           = "ubuntu:${var.vms_ssh_root_key}"
+    serial-port-enable = var.metadata["serial-port-enable"]
+    ssh-keys           = var.metadata["ssh-keys"]
+  }
+}
+
+resource "yandex_compute_instance" "platform_db" {
+  name        = local.name_db
+  platform_id = var.vm_db_platform_id
+  zone        = var.zone_b
+  resources {
+    cores         = var.vms_resources.db["cores"]
+    memory        = var.vms_resources.db["memory"]
+    core_fraction = var.vms_resources.db["core_fraction"]
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = true
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop_b.id
+    nat       = false
   }
 
+  metadata = {
+    serial-port-enable = var.metadata["serial-port-enable"]
+    ssh-keys           = var.metadata["ssh-keys"]
+  }
+}
+
+# nat gateway
+resource "yandex_vpc_gateway" "nat_gateway" {
+  folder_id = var.folder_id
+  name      = "test-gateway"
+  shared_egress_gateway {}
+}
+
+resource "yandex_vpc_route_table" "rt" {
+  folder_id  = var.folder_id
+  name       = "test-route-table"
+  network_id = yandex_vpc_network.develop.id
+
+  static_route {
+    destination_prefix = "0.0.0.0/0"
+    gateway_id         = yandex_vpc_gateway.nat_gateway.id
+  }
 }
