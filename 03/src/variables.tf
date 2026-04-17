@@ -30,3 +30,62 @@ variable "vpc_name" {
   default     = "develop"
   description = "VPC network&subnet name"
 }
+
+variable "vms_resources" {
+  type = map(object({
+    cores         = number
+    memory        = number
+    core_fraction = number
+  }))
+  description = "for all vms"
+}
+
+variable "metadata" {
+  type = object({
+    serial-port-enable = string
+    ssh-keys           = string
+  })
+  sensitive = true
+}
+
+variable "vm_name" {
+  type = string
+}
+
+variable "image" {
+  type        = string
+  description = "image name"
+}
+
+variable "vm_platform_id" {
+  type        = string
+  description = "platform type"
+}
+
+variable "delta" {
+  type = number
+}
+
+variable "each_vm" {
+  type = list(object({ vm_name = string, cpu = number, ram = number, disk_volume = number, core_fr = number }))
+}
+
+variable "disk_name" {
+  type = string
+}
+
+variable "disk_type" {
+  type = string
+}
+
+variable "disk_size" {
+  type = number
+}
+
+variable "num_of_disk" {
+  type = number
+}
+
+variable "storage_name" {
+  type = string
+}
