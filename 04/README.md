@@ -59,7 +59,7 @@
 
 ---
 
-4. [Модуль vpc](src/vpc)
+4. [Модуль vpc](src/modules/vpc)
 
 Скриншот вывода команды `module.project_vpc` в `terraform console`
 
@@ -71,7 +71,7 @@
 
 ---
 
-5. [Модуль создания MySQL кластера](src/db)
+5. [Модуль создания MySQL кластера](src/modules/db)
 
 Скриншоты веб консоли Yandex Cloud с созданным MySQL кластером (не HA)
 
@@ -79,7 +79,7 @@
 
 ![cluster not ha 2](img/screen19.png)
 
-[Модуль создания базы данных и пользователя](src/create_db)
+[Модуль создания базы данных и пользователя](src/modules/create_db)
 
 Скриншот веб консоли Yandex Cloud с созданной базой данных `test` в MySQL кластере
 
