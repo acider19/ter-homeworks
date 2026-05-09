@@ -2,12 +2,17 @@
 
 ---
 
-1.
+1. Скриншот страницы веб консоли Yandex Cloud с созданными ВМ с помощью remote-модуля
+
 ![vms](img/screen1.png)
 
-![yc web console1](img/screen2.png)
+Скриншоты вывода команды `module.analytics_vm` в `terraform console`
 
-![yc web console2](img/screen3.png)
+![terraform console1](img/screen2.png)
+
+![terraform console2](img/screen3.png)
+
+Скриншоты вывода команды `sudo nginx -t` в консоли ВМ
 
 ![vm console1](img/screen4.png)
 
@@ -51,3 +56,59 @@
 Скриншот выполнения команды `terraform plan` после импорта ресурсов
 
 ![terraform plan after imports](img/screen13.png)
+
+---
+
+4. [Модуль vpc](src/vpc)
+
+Скриншот вывода команды `module.project_vpc` в `terraform console`
+
+![my module output2](img/screen14.png)
+
+Скриншот страницы веб консоли Yandex Cloud с подсетями созданных модулем vpc 
+
+![subnets YC web console](img/screen15.png)
+
+---
+
+5. [Модуль создания MySQL кластера](src/db)
+
+Скриншоты веб консоли Yandex Cloud с созданным MySQL кластером (не HA)
+
+![cluster not ha 1](img/screen16.png)
+
+![cluster not ha 2](img/screen19.png)
+
+[Модуль создания базы данных и пользователя](src/create_db)
+
+Скриншот веб консоли Yandex Cloud с созданной базой данных `test` в MySQL кластере
+
+![bd](img/screen17.png)
+
+Скриншот веб консоли Yandex Cloud с созданным пользователем `app` в MySQL кластере
+
+![bd user](img/screen18.png)
+
+Скриншоты веб консоли Yandex Cloud после установления флага `ha = true` (создан дополнительный хост в кластере)
+
+![cluster ha](img/screen20.png)
+
+---
+
+6. Скриншот веб консоли Yandex Cloud с созданным S3 бакетом
+
+![s3](img/screen21.png)
+
+---
+
+7. Скриншот вывода значения секрета из HashiCorp Vault (команда `nonsensitive(data.vault_generic_secret.vault_example.data.test)`, выполненная в `terraform console`)
+
+![terraform console secret](img/screen22.png)
+
+Скриншот значения секрета, записанного в HashiCorp Vault с помощью Terraform
+
+![vault secret](img/screen23.png)
+
+---
+
+8. [VPC root-модуль](src/vpc), чтение из его `terraform.tfstate` выходных переменных в [main.tf](src/main.tf) строки 108-114 и далее использование этих переменных в модулях создания ВМ
