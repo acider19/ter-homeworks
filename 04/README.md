@@ -20,7 +20,7 @@
 
 ---
 
-2. [Файл с документацией модуля vpc](src/vpc/DOC.md)
+2. [Файл с документацией модуля vpc](src/modules/vpc/DOC.md)
 
 Скриншот вывода команды `module.project_vpc` в `terraform console`
 
