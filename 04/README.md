@@ -1,114 +1,26 @@
-# Домашнее задание к занятию «Продвинутые методы работы с Terraform» - Муравский Артем
+# Домашнее задание к занятию «Использование Terraform в команде» - Муравский Артем
 
 ---
 
-1. Скриншот страницы веб консоли Yandex Cloud с созданными ВМ с помощью remote-модуля
+1. При проверке кода с помощью `tflint` (выполнении команды `docker run --rm -v "$(pwd):/tflint" ghcr.io/terraform-linters/tflint --chdir=/tflint`), видим следующие типы ошибок (предупреждений):
+  - `Warning: Module source "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main" uses a default branch as ref (main) (terraform_module_pinned_source)` - ссылка на модуль из Git-репозитория через ветку main (или master), ветка по умолчанию может меняться со временем (например, разработчик модуля обновит main), и тогда инфраструктура неожиданно получит новую версию модуля. Это делает конфигурацию недетерминированной. Исправление: указать конкретный тег или коммит
 
-![vms](img/screen1.png)
+  - `Warning: Module source "git::https://github.com/terraform-yc-modules/terraform-yc-s3" is not pinned (terraform_module_pinned_source)` - в ссылке на модуль полностью отсутствует ?ref=.... Без фиксации версии Terraform всегда будет использовать последний коммит ветки по умолчанию (обычно main или master). Это ещё менее надёжно, чем использование main (потому что даже ветка по умолчанию не указана явно — она может измениться в репозитории). Исправление: добавить ?ref=... с конкретным тегом, веткой или хэшем коммита
 
-Скриншоты вывода команды `module.analytics_vm` в `terraform console`
+  - `Warning: Missing version constraint for provider "yandex" in `required_providers` (terraform_required_providers)` - в блоке terraform { required_providers { ... } } для провайдера yandex не указана версия. Без версии Terraform скачает самую последнюю версию провайдера при каждом init. Это может привести к несовместимости или неожиданному поведению при обновлении. Исправление: добавить явную версию провайдера в required_providers
 
-![terraform console1](img/screen2.png)
+  - `Warning: [Fixable] variable "vm_web_name" is declared but not used (terraform_unused_declarations)` - объявлена переменная (input variable) vm_web_name, но нигде в конфигурации (в ресурсах, модулях, output, locals) она не используется. Такие переменные создают шум в коде и могут вводить в заблуждение. Исправление: удалить переменную или использовать её в конфигурации
 
-![terraform console2](img/screen3.png)
-
-Скриншоты вывода команды `sudo nginx -t` в консоли ВМ
-
-![vm console1](img/screen4.png)
-
-![vm console2](img/screen5.png)
-
----
-
-2. [Файл с документацией модуля vpc](src/modules/vpc/DOC.md)
-
-Скриншот вывода команды `module.project_vpc` в `terraform console`
-
-![my module output](img/screen6.png)
+При выполнении кода с помощью `checkov` (командой `docker run --rm --tty --volume $(pwd):/tf --workdir /tf bridgecrew/checkov --download-external-modules true --directory /tf`), видим следующие типы ошибок (предупреждений):
+  - `CKV_SECRET_6: "Base64 High Entropy String"` - обнаружена строка, похожая на секрет (высокая энтропия, base64-подобная). Исправление: удалить токен из кода, использовать переменные окружения, terraform.tfvars (игнорируемый .gitignore), или секреты типа Yandex Lockbox / Vault.
+  - `CKV_TF_2: "Ensure Terraform module sources use a tag with a version number"` - лучше использовать теги с версиями (например ?ref=v1.2.3), а не ветки. Это более читаемо, чем хэш. Исправление: использовать теги с версиями вместо веток.
+  - `CKV_TF_1: "Ensure Terraform module sources use a commit hash"` - при использовании Git-репозитория в source модуля нужно указывать конкретный hash коммита, а не ветку (ref=main). Исправление: использовать теги с версиями вместо веток.
+  - `CKV_YC_1: "Ensure security group is assigned to database cluster."` - к кластеру базы данных (MySQL, Postgres) должна быть привязана security group. Исправление: привязать security group к кластеру базы данных.
+  - `CKV_YC_11: "Ensure security group is assigned to network interface."` - к сетевому интерфейсу ВМ должна быть привязана группа безопасности (security group). Исправление: привязать security group к сетевому интерфейсу.
+  - `CKV_YC_2: "Ensure compute instance does not have public IP."` - ВМ в Yandex Cloud не должна иметь публичный IP-адрес (если это не строго необходимо). Исправление: удалить публичный IP-адрес из конфигурации ВМ.
 
 ---
 
-3. Просмотр ресурсов, которые находятся в terraform state выполняется с помощью команды `terraform state list`
+2. Скриншот выполнения команды `terraform init -migrate-state`
 
-![terraform state list](img/screen7.png)
-
-Удаление ресурсов в terraform state (но не самого ресурса в облаке!) выполняется с помощью команды `terraform rm '<resource>'`
-Скриншот удаления ресурса `project_vpc` из terraform state
-
-![terraform state rm vpc](img/screen8.png)
-
-Скриншот удаления ресурсов `marketing_vm` и `analytics_vm` из terraform state
-
-![terraform state rm vm](img/screen9.png)
-
-Импорт ресурсов в terraform state выполняется с помощью команды `terraform import '<resource>' id`, значение `id` у ресурсов Yandex Cloud можно узнать в веб консоли
-
-Скриншоты импорта ресурсов `module.project_vpc.yandex_vpc_network.my_vpc` и `module.project_vpc.yandex_vpc_subnet.my_subnet`
-
-![terraform import vpc1](img/screen10.png)
-
-![terraform import vpc2](img/screen11.png)
-
-Скриншот импорта ресурсов `module.marketing_vm.yandex_compute_instance.vm[0]` и `module.analytics_vm.yandex_compute_instance.vm[0]`
-
-![terraform import vms](img/screen12.png)
-
-Скриншот выполнения команды `terraform plan` после импорта ресурсов
-
-![terraform plan after imports](img/screen13.png)
-
----
-
-4. [Модуль vpc](src/modules/vpc)
-
-Скриншот вывода команды `module.project_vpc` в `terraform console`
-
-![my module output2](img/screen14.png)
-
-Скриншот страницы веб консоли Yandex Cloud с подсетями созданных модулем vpc 
-
-![subnets YC web console](img/screen15.png)
-
----
-
-5. [Модуль создания MySQL кластера](src/modules/db)
-
-Скриншоты веб консоли Yandex Cloud с созданным MySQL кластером (не HA)
-
-![cluster not ha 1](img/screen16.png)
-
-![cluster not ha 2](img/screen19.png)
-
-[Модуль создания базы данных и пользователя](src/modules/create_db)
-
-Скриншот веб консоли Yandex Cloud с созданной базой данных `test` в MySQL кластере
-
-![bd](img/screen17.png)
-
-Скриншот веб консоли Yandex Cloud с созданным пользователем `app` в MySQL кластере
-
-![bd user](img/screen18.png)
-
-Скриншоты веб консоли Yandex Cloud после установления флага `ha = true` (создан дополнительный хост в кластере)
-
-![cluster ha](img/screen20.png)
-
----
-
-6. Скриншот веб консоли Yandex Cloud с созданным S3 бакетом
-
-![s3](img/screen21.png)
-
----
-
-7. Скриншот вывода значения секрета из HashiCorp Vault (команда `nonsensitive(data.vault_generic_secret.vault_example.data.test)`, выполненная в `terraform console`)
-
-![terraform console secret](img/screen22.png)
-
-Скриншот значения секрета, записанного в HashiCorp Vault с помощью Terraform
-
-![vault secret](img/screen23.png)
-
----
-
-8. [VPC root-модуль](src/vpc), чтение из его `terraform.tfstate` выходных переменных в [main.tf](src/main.tf) строки 108-114 и далее использование этих переменных в модулях создания ВМ
+![migrate state](img/screen5_1.png)
