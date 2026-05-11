@@ -25,7 +25,8 @@ terraform {
 
   required_providers {
     yandex = {
-      source = "yandex-cloud/yandex"
+      source  = "yandex-cloud/yandex"
+      version = "~> 0.200"
     }
 
     aws = {
@@ -36,6 +37,11 @@ terraform {
     random = {
       source  = "hashicorp/random"
       version = "> 3.5"
+    }
+
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 4.0"
     }
   }
 }
@@ -60,5 +66,5 @@ provider "aws" {
 provider "vault" {
   address         = "http://127.0.0.1:8200"
   skip_tls_verify = true
-  token           = "education"
+  token           = var.vault_token
 }
