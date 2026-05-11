@@ -24,3 +24,11 @@
 2. Скриншот выполнения команды `terraform init -migrate-state`
 
 ![migrate state](img/screen5_1.png)
+
+Скриншот выполнения команды `terraform apply` при предварительно выполненной команде `terraform console`
+
+![console&apply](img/screen5_2.png)
+
+Скриншот ручной разблокировки состояния командой `terraform force-unlock <lock_id>`
+
+![unlock](img/screen5_3.png)
