@@ -26,7 +26,7 @@ terraform {
   required_providers {
     yandex = {
       source  = "yandex-cloud/yandex"
-      version = "~> 0.200"
+      version = "> 0.100"
     }
 
     aws = {
@@ -41,7 +41,7 @@ terraform {
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 4.0"
+      version = "> 4.0"
     }
   }
 }

@@ -1,6 +1,6 @@
 # создание ВМ
 module "marketing_vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v1.0.0"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=1.0.0"
   env_name       = data.terraform_remote_state.vpc.outputs.vpc_name
   network_id     = data.terraform_remote_state.vpc.outputs.vpc_id
   subnet_zones   = [data.terraform_remote_state.vpc.outputs.vpc_subnet_zone["0"]]
@@ -24,7 +24,7 @@ module "marketing_vm" {
 # создание ВМ
 module "analytics_vm" {
   depends_on     = [module.marketing_vm]
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v1.0.0"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=1.0.0"
   env_name       = data.terraform_remote_state.vpc.outputs.vpc_name
   network_id     = data.terraform_remote_state.vpc.outputs.vpc_id
   subnet_zones   = [data.terraform_remote_state.vpc.outputs.vpc_subnet_zone["1"]]
