@@ -40,7 +40,7 @@ variable "image" {
   description = "os image for vms"
 }
 
-###common vars
+# common vars
 
 variable "vms_ssh_root_key" {
   type        = string
@@ -54,20 +54,6 @@ variable "vms_packages" {
   type        = list(string)
   description = "packages for install on vms"
   default     = ["nginx", "jq", "curl"]
-}
-
-###example vm_web var
-variable "vm_web_name" {
-  type        = string
-  default     = "netology-develop-platform-web"
-  description = "example vm_web_ prefix"
-}
-
-###example vm_db var
-variable "vm_db_name" {
-  type        = string
-  default     = "netology-develop-platform-db"
-  description = "example vm_db_ prefix"
 }
 
 # vms instance name
@@ -102,4 +88,10 @@ variable "db_password" {
 variable "db_name" {
   type        = string
   description = "name for managed db instance"
+}
+
+# vault vars
+variable "vault_token" {
+  type        = string
+  description = "vault token"
 }
