@@ -46,23 +46,24 @@ module "analytics_vm" {
 }
 
 # создание кластера MDB
-module "project_mdb" {
-  source    = "./modules/db"
-  vpc_id    = data.terraform_remote_state.vpc.outputs.vpc_id
-  mdb_name  = var.mdb_name
-  zone      = data.terraform_remote_state.vpc.outputs.vpc_subnet_zone["0"]
-  subnet_id = data.terraform_remote_state.vpc.outputs.vpc_subnet_id["0"]
-  ha        = var.ha
-}
+# module "project_mdb" {
+#   source    = "./modules/db"
+#   vpc_id    = data.terraform_remote_state.vpc.outputs.vpc_id
+#   mdb_name  = var.mdb_name
+#   zone      = data.terraform_remote_state.vpc.outputs.vpc_subnet_zone["0"]
+#   subnet_id = data.terraform_remote_state.vpc.outputs.vpc_subnet_id["0"]
+#   ha        = var.ha
+# }
 
 # создание базы данных и пользователя
-module "create_db" {
-  source      = "./modules/create_db"
-  cluster_id  = module.project_mdb.cluster_id
-  db_name     = var.db_name
-  db_user     = var.db_user
-  db_password = var.db_password
-}
+# module "create_db" {
+#   source      = "./modules/create_db"
+#   count       = var.enable_mysql ? 1 : 0
+#   cluster_id  = module.project_mdb.cluster_id
+#   db_name     = var.db_name
+#   db_user     = var.db_user
+#   db_password = var.db_password
+# }
 
 # создание user_data для ВМ
 locals {
@@ -91,25 +92,33 @@ module "s3_bucket" {
 }
 
 # чтение данных из Vault
-data "vault_generic_secret" "vault_example" {
-  path = "secret/example"
-}
+# data "vault_generic_secret" "vault_example" {
+#   path = "secret/example"
+# }
 
 # запись данных в Vault
-resource "vault_generic_secret" "my_example" {
-  path = "secret/my_example"
+# resource "vault_generic_secret" "my_example" {
+#   path = "secret/my_example"
 
-  data_json = jsonencode(
-    {
-      "name" = "artyom"
-    }
-  )
-}
+#   data_json = jsonencode(
+#     {
+#       "name" = "artyom"
+#     }
+#   )
+# }
 
 # чтение данных из remote state vpc
 data "terraform_remote_state" "vpc" {
   backend = "local"
   config = {
     path = "./vpc/terraform.tfstate"
+  }
+}
+
+# чтение данных из remote state backend
+data "terraform_remote_state" "backend" {
+  backend = "local"
+  config = {
+    path = "./backend/terraform.tfstate"
   }
 }

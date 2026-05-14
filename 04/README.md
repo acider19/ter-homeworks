@@ -32,3 +32,28 @@
 Скриншот ручной разблокировки состояния командой `terraform force-unlock <lock_id>`
 
 ![unlock](img/screen5_3.png)
+
+---
+
+3. [Ссылка на PR](https://github.com/acider19/ter-homeworks/pull/1)
+
+---
+
+4. [Переменные `var1` и `var2` с валидацией](src/variables.tf) c. 113-131
+
+Скриншот запуска `terraform console` с "правильными" значениями переменных
+
+![console](img/screen5_4.png)
+
+Скриншот запуска `terraform console` с "неправильными" значениями переменных
+
+![console](img/screen5_5.png)
+
+---
+
+5. Проверка того, что строка не содержит символов верхнего регистра в [variables.tf](src/variables.tf) c. 134-141
+Проверка того, что одно из значений равно true, а второе false в [variables.tf](src/variables.tf) c. 143-159
+
+---
+
+7. [Отдельный root-модуль, создающий инфраструктуру для remote state](src/backend/)

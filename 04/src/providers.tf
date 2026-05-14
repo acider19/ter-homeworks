@@ -5,7 +5,6 @@ terraform {
   backend "s3" {
     shared_credentials_files = ["~/.aws/credentials"]
     profile                  = "netology"
-    bucket                   = "mav-tf-state"
     key                      = "terraform.tfstate"
     region                   = "ru-central1"
 
